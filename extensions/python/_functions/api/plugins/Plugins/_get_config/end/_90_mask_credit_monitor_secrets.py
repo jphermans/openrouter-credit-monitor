@@ -17,9 +17,6 @@ class MaskCreditMonitorSecrets(Extension):
         result = data.get("result")
         if not isinstance(result, dict) or not result.get("ok"):
             return
-        if result.get("loaded_project_name") or result.get("loaded_agent_profile"):
-            # Scoped configs behave the same; masking applies to data below.
-            pass
         payload = result.get("data")
         if not isinstance(payload, dict):
             return

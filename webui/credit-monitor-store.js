@@ -81,7 +81,10 @@ export const store = createStore("openrouterCreditStore", {
     const previous = this.status;
     this.status = String(data.status || "unavailable");
     this.remaining = typeof data.remaining === "number" ? data.remaining : null;
-        this.keyLabel = "JPHsystems"
+    this.keyLabel =
+      typeof data.key_label === "string" && data.key_label
+        ? data.key_label
+        : null;
     this.showBalance = data.show_balance_in_ui !== false;
     this.staleAgeSeconds =
       typeof data.age_seconds === "number" ? data.age_seconds : null;

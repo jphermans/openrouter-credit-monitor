@@ -130,7 +130,7 @@ class Status(ApiHandler):
 
         # 1) Credits via Management Key (authoritative for account balance).
         try:
-            credits = fetch_credits(settings["management_key"])
+            credits = await fetch_credits(settings["management_key"])
         except AuthenticationError:
             error_reason = "authentication_failed"
         except OpenRouterError as exc:
@@ -141,7 +141,7 @@ class Status(ApiHandler):
         # 2) Optional key-level info via API Key; failure is non-fatal.
         if settings["api_key"]:
             try:
-                key_info = fetch_key_info(settings["api_key"])
+                key_info = await fetch_key_info(settings["api_key"])
             except Exception:
                 key_info = None
 

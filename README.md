@@ -11,7 +11,7 @@
   <a href="https://agent-zero.ai">
     <img src="https://img.shields.io/badge/Agent%20Zero-Plugin-0A192F?style=for-the-badge" alt="Agent Zero Plugin">
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0.0-2EA043?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.0-2EA043?style=for-the-badge" alt="Version">
 </p>
 
 ---

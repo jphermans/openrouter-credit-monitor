@@ -48,16 +48,15 @@ def _merge_with_stored(settings: dict, stored: dict | None) -> dict:
     return merged
 
 
-def _load_stored_settings() -> dict:
-    from helpers.plugins import get_plugin_config
+def _load_stored_settings(project_name: str | None = None, agent_profile: str | None = None) -> dict:
+    """Read raw stored settings for the same scope the framework targets."""
     from helpers import files, plugins
 
-    # Read the raw stored config.json (without recursion into hooks).
     entries = plugins.find_plugin_assets(
         plugins.CONFIG_FILE_NAME,
         plugin_name=state.PLUGIN_NAME,
-        project_name="",
-        agent_profile="",
+        project_name=project_name or "",
+        agent_profile=agent_profile or "",
         only_first=True,
     )
     if entries:
@@ -85,10 +84,10 @@ def get_plugin_config(default=None, hook_context=None, **kwargs):
     return config
 
 
-def save_plugin_config(settings=None, default=None, **kwargs):
+def save_plugin_config(settings=None, default=None, project_name=None, agent_profile=None, **kwargs):
     """Persist settings; keep existing secrets when the UI submits masks."""
     submitted = _normalize(settings if isinstance(settings, dict) else default)
-    stored = _load_stored_settings()
+    stored = _load_stored_settings(project_name=project_name, agent_profile=agent_profile)
     merged = _merge_with_stored(submitted, stored)
     return _normalize(merged)
 

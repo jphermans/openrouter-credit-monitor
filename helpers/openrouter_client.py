@@ -1,7 +1,8 @@
 """Server-side OpenRouter HTTP client for the Credit Monitor plugin.
 
 All requests to OpenRouter happen here, inside the Agent Zero framework
-runtime. Credentials never reach browser-side JavaScript.
+runtime, using async httpx so polls never block the event loop.
+Credentials never reach browser-side JavaScript.
 """
 
 from typing import Any
@@ -81,23 +82,28 @@ def _to_float(value: Any) -> float | None:
     return number
 
 
-def fetch_credits(management_key: str) -> dict[str, Any]:
+async def _get(url: str, bearer: str) -> httpx.Response:
+    """Async GET with Bearer auth; normalizes transport errors."""
+    try:
+        async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+            return await client.get(
+                url,
+                headers={
+                    "Authorization": f"Bearer {bearer}",
+                    "Accept": "application/json",
+                },
+            )
+    except Exception as exc:
+        raise _classify_request_error(exc) from exc
+
+
+async def fetch_credits(management_key: str) -> dict[str, Any]:
     """GET /api/v1/credits with a Management Key.
 
     Returns a dict with total_credits, total_usage and derived remaining.
     Raises OpenRouterError subclasses on failure.
     """
-    try:
-        response = httpx.get(
-            CREDITS_URL,
-            headers={
-                "Authorization": f"Bearer {management_key}",
-                "Accept": "application/json",
-            },
-            timeout=TIMEOUT,
-        )
-    except Exception as exc:
-        raise _classify_request_error(exc) from exc
+    response = await _get(CREDITS_URL, management_key)
 
     if response.status_code != 200:
         raise _http_error(response.status_code, response.text)
@@ -119,23 +125,13 @@ def fetch_credits(management_key: str) -> dict[str, Any]:
     }
 
 
-def fetch_key_info(api_key: str) -> dict[str, Any]:
+async def fetch_key_info(api_key: str) -> dict[str, Any]:
     """GET /api/v1/key with a (optional) API key.
 
     Returns non-sensitive key metadata: label, usage, limit, remaining limit.
     Raises OpenRouterError subclasses on failure.
     """
-    try:
-        response = httpx.get(
-            KEY_URL,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Accept": "application/json",
-            },
-            timeout=TIMEOUT,
-        )
-    except Exception as exc:
-        raise _classify_request_error(exc) from exc
+    response = await _get(KEY_URL, api_key)
 
     if response.status_code != 200:
         raise _http_error(response.status_code, response.text)
