@@ -6,12 +6,12 @@
 
 <p align="center">
   <a href="https://github.com/jphermans/openrouter-credit-monitor">
-    <img src="https://img.shields.io/badge/GitHub-OpenRouter%20Credit%20Monitor-blue?style=flat-square" alt="GitHub">
+    <img src="https://img.shields.io/badge/GitHub-OpenRouter%20Credit%20Monitor-1F6FEB?style=for-the-badge&logo=github" alt="GitHub">
   </a>
-  <a href="https://agentzero.ai">
-    <img src="https://img.shields.io/badge/Agent%20Zero-v2.13%2B-green?style=flat-square" alt="Agent Zero">
+  <a href="https://agent-zero.ai">
+    <img src="https://img.shields.io/badge/Agent%20Zero-Plugin-0A192F?style=for-the-badge" alt="Agent Zero Plugin">
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0.0-green?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.0-2EA043?style=for-the-badge" alt="Version">
 </p>
 
 ---
