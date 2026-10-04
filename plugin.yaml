@@ -1,0 +1,8 @@
+name: openrouter_credit_monitor
+title: OpenRouter Credit Monitor
+description: Displays the current OpenRouter credit balance and API-key usage directly in the Agent Zero WebUI.
+version: 1.0.0
+settings_sections:
+  - external
+per_project_config: false
+per_agent_config: false

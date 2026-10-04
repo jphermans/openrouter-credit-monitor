@@ -1,0 +1,226 @@
+<script type="module">
+  import { store } from "/plugins/openrouter_credit_monitor/webui/credit-monitor-store.js";
+</script>
+
+<div x-data>
+  <template x-if="$store.openrouterCreditStore">
+    <div class="ocr-indicator-root"
+         x-create="$store.openrouterCreditStore.onOpen()"
+         x-destroy="$store.openrouterCreditStore.cleanup()"
+         @click.outside="$store.openrouterCreditStore.open = false"
+         @keydown.escape.window="$store.openrouterCreditStore.open = false">
+      <template x-if="$store.openrouterCreditStore.indicatorVisible">
+      <button type="button"
+              class="ocr-indicator"
+              :class="$store.openrouterCreditStore.statusClass"
+              :aria-label="`OpenRouter balance ${$store.openrouterCreditStore.balanceLabel}`"
+              :title="`OpenRouter balance ${$store.openrouterCreditStore.balanceLabel}`"
+              @click="$store.openrouterCreditStore.toggle()">
+        <x-icon name="account_balance_wallet" aria-hidden="true"></x-icon>
+        <span class="ocr-provider">OpenRouter</span>
+        <span class="ocr-value" x-text="$store.openrouterCreditStore.balanceLabel"></span>
+        <span class="ocr-status-chip" x-show="$store.openrouterCreditStore.statusLabel"
+              x-text="$store.openrouterCreditStore.statusLabel"></span>
+      </button>
+      </template>
+
+      <div class="ocr-popover"
+           x-show="$store.openrouterCreditStore.open"
+           x-transition.opacity
+           style="display: none;"
+           role="dialog"
+           aria-label="OpenRouter credit details">
+        <div class="ocr-popover-header">
+          <strong>OpenRouter credits</strong>
+          <button type="button" class="ocr-refresh"
+                  title="Refresh now"
+                  :aria-label="'Refresh now'"
+                  :disabled="$store.openrouterCreditStore.busy"
+                  @click="$store.openrouterCreditStore.manualRefresh()">
+            <x-icon name="refresh" aria-hidden="true"></x-icon>
+          </button>
+        </div>
+
+        <template x-if="$store.openrouterCreditStore.status === 'not_configured'">
+          <div class="ocr-row ocr-setup">
+            <span>Add an OpenRouter Management Key to see your balance.</span>
+            <button type="button" class="btn" @click="$store.openrouterCreditStore.openSettings()">Open settings</button>
+          </div>
+        </template>
+
+        <template x-if="$store.openrouterCreditStore.status !== 'not_configured'">
+          <div class="ocr-rows">
+            <div class="ocr-row">
+              <span>Account</span>
+              <span class="ocr-value-strong" x-text="$store.openrouterCreditStore.keyLabel || 'OpenRouter'"></span>
+            </div>
+            <div class="ocr-row">
+              <span>Remaining</span>
+              <span class="ocr-value-strong" x-text="$store.openrouterCreditStore.balanceLabel"></span>
+            </div>
+            <div class="ocr-row">
+              <span>State</span>
+              <span class="ocr-value-strong" x-text="$store.openrouterCreditStore.statusLabel || 'OK'"></span>
+            </div>
+            <div class="ocr-row">
+              <span>Updated</span>
+              <span class="ocr-value-strong" x-text="$store.openrouterCreditStore.lastUpdatedLabel || 'just now'"></span>
+            </div>
+          </div>
+        </template>
+
+        <button type="button" class="ocr-settings-link" @click="$store.openrouterCreditStore.openSettings()">
+          <x-icon name="settings" aria-hidden="true"></x-icon>
+          <span>Plugin settings</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>
+
+<style>
+  .ocr-indicator-root {
+    position: relative;
+    margin: 0 var(--spacing-md);
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .ocr-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 30px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 0.75rem;
+    line-height: 1.1;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .ocr-indicator:hover, .ocr-indicator:focus-visible {
+    background-color: color-mix(in srgb, var(--color-border) 45%, transparent);
+    opacity: 1;
+  }
+
+  .ocr-indicator x-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .ocr-provider {
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .ocr-value {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ocr-status-chip {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .ocr-warning .ocr-status-chip {
+    background: color-mix(in srgb, var(--color-warning-text) 18%, transparent);
+    color: var(--color-warning-text);
+  }
+
+  .ocr-critical .ocr-status-chip {
+    background: color-mix(in srgb, var(--color-error-text) 18%, transparent);
+    color: var(--color-error-text);
+  }
+
+  .ocr-critical .ocr-value {
+    color: var(--color-error-text);
+  }
+
+  .ocr-unavailable .ocr-value {
+    opacity: 0.7;
+  }
+
+  .ocr-popover {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    width: min(20rem, calc(100vw - 4rem));
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--color-panel) 95%, black 10%);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .ocr-popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+  }
+
+  .ocr-refresh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    opacity: 0.75;
+  }
+
+  .ocr-refresh:hover:not(:disabled) { opacity: 1; background-color: color-mix(in srgb, var(--color-border) 45%, transparent); }
+  .ocr-refresh:disabled { opacity: 0.4; cursor: default; }
+
+  .ocr-rows { display: flex; flex-direction: column; gap: 0.3rem; }
+
+  .ocr-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .ocr-row > span:first-child { opacity: 0.7; }
+  .ocr-value-strong { font-weight: 600; white-space: nowrap; }
+
+  .ocr-setup { flex-direction: column; align-items: flex-start; gap: 0.4rem; font-size: 0.72rem; opacity: 0.85; }
+
+  .ocr-settings-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 0.72rem;
+    cursor: pointer;
+    opacity: 0.75;
+    text-align: left;
+  }
+
+  .ocr-settings-link:hover { opacity: 1; background-color: color-mix(in srgb, var(--color-border) 45%, transparent); }
+
+
+</style>

@@ -1,0 +1,133 @@
+<html>
+<head>
+  <title>OpenRouter Credit Monitor</title>
+  <script type="module">
+    import { store } from "/components/plugins/plugin-settings-store.js";
+  </script>
+</head>
+
+<body>
+  <div x-data="{
+    intervals: [
+      { value: 30, label: '30 seconds' },
+      { value: 60, label: '1 minute' },
+      { value: 120, label: '2 minutes' },
+      { value: 300, label: '5 minutes' },
+      { value: 600, label: '10 minutes' },
+    ],
+    initConfig() {
+      if (typeof config.openrouter_management_key !== 'string') config.openrouter_management_key = '';
+      if (typeof config.openrouter_api_key !== 'string') config.openrouter_api_key = '';
+      const allowed = this.intervals.map(i => i.value);
+      const interval = Number(config.refresh_interval_seconds);
+      config.refresh_interval_seconds = allowed.includes(interval) ? interval : 60;
+      const low = Number(config.low_credit_warning);
+      config.low_credit_warning = Number.isFinite(low) && low >= 0 ? low : 5;
+      const critical = Number(config.critical_credit_warning);
+      config.critical_credit_warning = Number.isFinite(critical) && critical >= 0 ? critical : 1;
+      if (config.show_balance_in_ui === undefined || config.show_balance_in_ui === null) {
+        config.show_balance_in_ui = true;
+      }
+    },
+    intervalLabel(value) {
+      const found = this.intervals.find(i => i.value === Number(value));
+      return found ? found.label : '1 minute';
+    }
+  }" x-init="initConfig()">
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">OpenRouter Management Key</div>
+        <div class="field-description">
+          Required for the account balance. Create one at
+          <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener">openrouter.ai/settings/keys</a>
+          (choose a provisioning/management key). Stored server-side only and never shown again after saving.
+        </div>
+      </div>
+      <div class="field-control">
+        <input type="password" autocomplete="new-password" spellcheck="false"
+               x-model="config.openrouter_management_key"
+               placeholder="sk-or-v1-…" />
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">OpenRouter API Key <span class="ocr-optional">optional</span></div>
+        <div class="field-description">
+          Used only for key-level usage info (label, usage, spending limit) from
+          <span class="ocr-code">GET /api/v1/key</span>. The monitor works without it.
+        </div>
+      </div>
+      <div class="field-control">
+        <input type="password" autocomplete="new-password" spellcheck="false"
+               x-model="config.openrouter_api_key"
+               placeholder="sk-or-…" />
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">Refresh interval</div>
+        <div class="field-description">How often the WebUI asks the plugin backend for a fresh balance.</div>
+      </div>
+      <div class="field-control">
+        <select x-model.number="config.refresh_interval_seconds">
+          <template x-for="opt in intervals" :key="opt.value">
+            <option :value="opt.value" x-text="opt.label" :selected="Number(config.refresh_interval_seconds) === opt.value"></option>
+          </template>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">Low-credit warning (USD)</div>
+        <div class="field-description">Show a “Low” badge and a warning notification at or below this remaining balance.</div>
+      </div>
+      <div class="field-control">
+        <input type="number" min="0" step="0.01" x-model.number="config.low_credit_warning" />
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">Critical-credit warning (USD)</div>
+        <div class="field-description">Show a “Critical” badge and an error notification at or below this remaining balance.</div>
+      </div>
+      <div class="field-control">
+        <input type="number" min="0" step="0.01" x-model.number="config.critical_credit_warning" />
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <div class="field-title">Show balance in WebUI</div>
+        <div class="field-description">Display the persistent OpenRouter indicator in the sidebar.</div>
+      </div>
+      <div class="field-control">
+        <label class="toggle">
+          <input type="checkbox" x-model="config.show_balance_in_ui" />
+          <span class="toggler"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .ocr-optional {
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 999px;
+      opacity: 0.75;
+      background: color-mix(in srgb, var(--color-border) 60%, transparent);
+      vertical-align: middle;
+    }
+    .ocr-code {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.68rem;
+    }
+  </style>
+</body>
+</html>

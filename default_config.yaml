@@ -1,0 +1,8 @@
+# OpenRouter Credit Monitor defaults.
+# Secrets belong in the plugin settings UI (stored in user-space config.json), never here.
+openrouter_management_key: ""
+openrouter_api_key: ""
+refresh_interval_seconds: 60
+low_credit_warning: 5.0
+critical_credit_warning: 1.0
+show_balance_in_ui: true
