@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/jphsystems/openrouter-credit-monitor">
+  <a href="https://github.com/jphermans/openrouter-credit-monitor">
     <img src="https://img.shields.io/badge/GitHub-OpenRouter%20Credit%20Monitor-blue?style=flat-square" alt="GitHub">
   </a>
   <a href="https://agentzero.ai">
@@ -53,7 +53,7 @@
 1. Clone this repository into your Agent Zero plugins directory:
    ```bash
    cd /a0/usr/plugins
-   git clone https://github.com/jphsystems/openrouter-credit-monitor.git
+   git clone https://github.com/jphermans/openrouter-credit-monitor.git
    ```
 
 2. Restart Agent Zero or enable the plugin via Settings → Plugins
@@ -165,8 +165,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## Support
 
-- 🐛 **Issues**: [Report bugs](https://github.com/jphsystems/openrouter-credit-monitor/issues)
-- 💬 **Discussions**: [Ask questions](https://github.com/jphsystems/openrouter-credit-monitor/discussions)
+- 🐛 **Issues**: [Report bugs](https://github.com/jphermans/openrouter-credit-monitor/issues)
+- 💬 **Discussions**: [Ask questions](https://github.com/jphermans/openrouter-credit-monitor/discussions)
 - 📖 **Agent Zero Docs**: [agentzero.ai/docs](https://agentzero.ai/docs)
 
 ---
