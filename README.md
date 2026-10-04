@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yourusername/openrouter-credit-monitor">
+  <a href="https://github.com/jphsystems/openrouter-credit-monitor">
     <img src="https://img.shields.io/badge/GitHub-OpenRouter%20Credit%20Monitor-blue?style=flat-square" alt="GitHub">
   </a>
   <a href="https://agentzero.ai">
@@ -28,12 +28,6 @@
 - ⚡ **Auto-Refresh** — Configurable refresh interval (30s to 10 minutes)
 - 🎨 **Clean UI** — Non-intrusive indicator that blends with Agent Zero's design
 - 🔒 **Secure** — Credentials never leave your server; all API calls are server-side
-
-## Screenshots
-
-| Indicator in Sidebar | Popover Details |
-|---------------------|-----------------|
-| ![Indicator](docs/screenshots/indicator.png) | ![Popover](docs/screenshots/popover.png) |
 
 ## Installation
 
@@ -59,7 +53,7 @@
 1. Clone this repository into your Agent Zero plugins directory:
    ```bash
    cd /a0/usr/plugins
-   git clone https://github.com/yourusername/openrouter-credit-monitor.git
+   git clone https://github.com/jphsystems/openrouter-credit-monitor.git
    ```
 
 2. Restart Agent Zero or enable the plugin via Settings → Plugins
@@ -171,8 +165,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## Support
 
-- 🐛 **Issues**: [Report bugs](https://github.com/yourusername/openrouter-credit-monitor/issues)
-- 💬 **Discussions**: [Ask questions](https://github.com/yourusername/openrouter-credit-monitor/discussions)
+- 🐛 **Issues**: [Report bugs](https://github.com/jphsystems/openrouter-credit-monitor/issues)
+- 💬 **Discussions**: [Ask questions](https://github.com/jphsystems/openrouter-credit-monitor/discussions)
 - 📖 **Agent Zero Docs**: [agentzero.ai/docs](https://agentzero.ai/docs)
 
 ---
