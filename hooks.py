@@ -86,7 +86,10 @@ def get_plugin_config(default=None, hook_context=None, **kwargs):
 
 def save_plugin_config(settings=None, default=None, project_name=None, agent_profile=None, **kwargs):
     """Persist settings; keep existing secrets when the UI submits masks."""
-    submitted = _normalize(settings if isinstance(settings, dict) else default)
+    # Merge on the raw submitted values BEFORE normalization: _normalize()
+    # turns the unchanged mask ("***") into "", which would otherwise wipe the
+    # stored secret before _merge_with_stored() could restore it.
+    submitted = settings if isinstance(settings, dict) else (default or {})
     stored = _load_stored_settings(project_name=project_name, agent_profile=agent_profile)
     merged = _merge_with_stored(submitted, stored)
     return _normalize(merged)
